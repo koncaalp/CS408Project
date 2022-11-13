@@ -1,3 +1,11 @@
 c:\users\aydın aydemir\documents\visual studio 2015\Projects\ProjectStep1_Client\ProjectStep1_Client\bin\Debug\ProjectStep1_Client.exe.config
 C:\Users\Aydın Aydemir\Documents\Git Repos\New folder\CS408Project\ProjectStep1_Client\bin\Debug\ProjectStep1_Client.exe.config
 C:\Users\Aydın Aydemir\Documents\GitRepos\CS408_Project\CS408Project\ProjectStep1_Client\bin\Debug\ProjectStep1_Client.exe.config
+C:\Users\Aydın Aydemir\Documents\GitRepos\CS408_Project\CS408Project\ProjectStep1_Client\bin\Debug\ProjectStep1_Client.exe
+C:\Users\Aydın Aydemir\Documents\GitRepos\CS408_Project\CS408Project\ProjectStep1_Client\bin\Debug\ProjectStep1_Client.pdb
+C:\Users\Aydın Aydemir\Documents\GitRepos\CS408_Project\CS408Project\ProjectStep1_Client\obj\Debug\ProjectStep1_Client.csprojResolveAssemblyReference.cache
+C:\Users\Aydın Aydemir\Documents\GitRepos\CS408_Project\CS408Project\ProjectStep1_Client\obj\Debug\ProjectStep1_Client.Form1.resources
+C:\Users\Aydın Aydemir\Documents\GitRepos\CS408_Project\CS408Project\ProjectStep1_Client\obj\Debug\ProjectStep1_Client.Properties.Resources.resources
+C:\Users\Aydın Aydemir\Documents\GitRepos\CS408_Project\CS408Project\ProjectStep1_Client\obj\Debug\ProjectStep1_Client.csproj.GenerateResource.Cache
+C:\Users\Aydın Aydemir\Documents\GitRepos\CS408_Project\CS408Project\ProjectStep1_Client\obj\Debug\ProjectStep1_Client.exe
+C:\Users\Aydın Aydemir\Documents\GitRepos\CS408_Project\CS408Project\ProjectStep1_Client\obj\Debug\ProjectStep1_Client.pdb
