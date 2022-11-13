@@ -26,5 +26,10 @@ namespace ProjectStep1_Client
         {
 
         }
+
+        private void label5_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 }
