@@ -1,0 +1,3 @@
+c:\users\aydın aydemir\documents\visual studio 2015\Projects\ProjectStep1_Client\ProjectStep1_Client\bin\Debug\ProjectStep1_Client.exe.config
+C:\Users\Aydın Aydemir\Documents\Git Repos\New folder\CS408Project\ProjectStep1_Client\bin\Debug\ProjectStep1_Client.exe.config
+C:\Users\Aydın Aydemir\Documents\GitRepos\CS408_Project\CS408Project\ProjectStep1_Client\bin\Debug\ProjectStep1_Client.exe.config
