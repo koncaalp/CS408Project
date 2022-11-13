@@ -31,15 +31,15 @@
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
-            this.textBox1 = new System.Windows.Forms.TextBox();
-            this.textBox2 = new System.Windows.Forms.TextBox();
-            this.textBox3 = new System.Windows.Forms.TextBox();
-            this.richTextBox1 = new System.Windows.Forms.RichTextBox();
-            this.button1 = new System.Windows.Forms.Button();
-            this.label4 = new System.Windows.Forms.Label();
-            this.textBox4 = new System.Windows.Forms.TextBox();
-            this.button2 = new System.Windows.Forms.Button();
-            this.button3 = new System.Windows.Forms.Button();
+            this.textBox_ip = new System.Windows.Forms.TextBox();
+            this.textBox_port = new System.Windows.Forms.TextBox();
+            this.textBox_name = new System.Windows.Forms.TextBox();
+            this.logs = new System.Windows.Forms.RichTextBox();
+            this.button_connect = new System.Windows.Forms.Button();
+            this.label_answer = new System.Windows.Forms.Label();
+            this.textBox_answer = new System.Windows.Forms.TextBox();
+            this.button_disconnect = new System.Windows.Forms.Button();
+            this.button_submit = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // label1
@@ -70,96 +70,101 @@
             this.label3.TabIndex = 2;
             this.label3.Text = "Name:";
             // 
-            // textBox1
+            // textBox_ip
             // 
-            this.textBox1.Location = new System.Drawing.Point(71, 43);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(153, 20);
-            this.textBox1.TabIndex = 3;
+            this.textBox_ip.Location = new System.Drawing.Point(71, 43);
+            this.textBox_ip.Name = "textBox_ip";
+            this.textBox_ip.Size = new System.Drawing.Size(153, 20);
+            this.textBox_ip.TabIndex = 3;
             // 
-            // textBox2
+            // textBox_port
             // 
-            this.textBox2.Location = new System.Drawing.Point(71, 78);
-            this.textBox2.Name = "textBox2";
-            this.textBox2.Size = new System.Drawing.Size(153, 20);
-            this.textBox2.TabIndex = 4;
+            this.textBox_port.Location = new System.Drawing.Point(71, 78);
+            this.textBox_port.Name = "textBox_port";
+            this.textBox_port.Size = new System.Drawing.Size(153, 20);
+            this.textBox_port.TabIndex = 4;
             // 
-            // textBox3
+            // textBox_name
             // 
-            this.textBox3.Location = new System.Drawing.Point(71, 117);
-            this.textBox3.Name = "textBox3";
-            this.textBox3.Size = new System.Drawing.Size(153, 20);
-            this.textBox3.TabIndex = 5;
+            this.textBox_name.Location = new System.Drawing.Point(71, 117);
+            this.textBox_name.Name = "textBox_name";
+            this.textBox_name.Size = new System.Drawing.Size(153, 20);
+            this.textBox_name.TabIndex = 5;
             // 
-            // richTextBox1
+            // logs
             // 
-            this.richTextBox1.Location = new System.Drawing.Point(262, 25);
-            this.richTextBox1.Name = "richTextBox1";
-            this.richTextBox1.ReadOnly = true;
-            this.richTextBox1.Size = new System.Drawing.Size(292, 495);
-            this.richTextBox1.TabIndex = 6;
-            this.richTextBox1.Text = "";
+            this.logs.Location = new System.Drawing.Point(262, 25);
+            this.logs.Name = "logs";
+            this.logs.ReadOnly = true;
+            this.logs.Size = new System.Drawing.Size(292, 495);
+            this.logs.TabIndex = 6;
+            this.logs.Text = "";
             // 
-            // button1
+            // button_connect
             // 
-            this.button1.Location = new System.Drawing.Point(138, 157);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(86, 23);
-            this.button1.TabIndex = 7;
-            this.button1.Text = "CONNECT";
-            this.button1.UseVisualStyleBackColor = true;
+            this.button_connect.Location = new System.Drawing.Point(138, 157);
+            this.button_connect.Name = "button_connect";
+            this.button_connect.Size = new System.Drawing.Size(86, 23);
+            this.button_connect.TabIndex = 7;
+            this.button_connect.Text = "CONNECT";
+            this.button_connect.UseVisualStyleBackColor = true;
+            this.button_connect.Click += new System.EventHandler(this.button1_Click);
             // 
-            // label4
+            // label_answer
             // 
-            this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(109, 320);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(55, 13);
-            this.label4.TabIndex = 8;
-            this.label4.Text = "ANSWER";
-            this.label4.Click += new System.EventHandler(this.label4_Click);
+            this.label_answer.AutoSize = true;
+            this.label_answer.Location = new System.Drawing.Point(109, 320);
+            this.label_answer.Name = "label_answer";
+            this.label_answer.Size = new System.Drawing.Size(55, 13);
+            this.label_answer.TabIndex = 8;
+            this.label_answer.Text = "ANSWER";
+            this.label_answer.Visible = false;
+            this.label_answer.Click += new System.EventHandler(this.label4_Click);
             // 
-            // textBox4
+            // textBox_answer
             // 
-            this.textBox4.Location = new System.Drawing.Point(12, 336);
-            this.textBox4.Name = "textBox4";
-            this.textBox4.Size = new System.Drawing.Size(238, 20);
-            this.textBox4.TabIndex = 9;
+            this.textBox_answer.Location = new System.Drawing.Point(12, 336);
+            this.textBox_answer.Name = "textBox_answer";
+            this.textBox_answer.Size = new System.Drawing.Size(238, 20);
+            this.textBox_answer.TabIndex = 9;
+            this.textBox_answer.Visible = false;
             // 
-            // button2
+            // button_disconnect
             // 
-            this.button2.Enabled = false;
-            this.button2.Location = new System.Drawing.Point(38, 157);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(86, 23);
-            this.button2.TabIndex = 10;
-            this.button2.Text = "DISCONNECT";
-            this.button2.UseVisualStyleBackColor = true;
+            this.button_disconnect.Enabled = false;
+            this.button_disconnect.Location = new System.Drawing.Point(38, 157);
+            this.button_disconnect.Name = "button_disconnect";
+            this.button_disconnect.Size = new System.Drawing.Size(86, 23);
+            this.button_disconnect.TabIndex = 10;
+            this.button_disconnect.Text = "DISCONNECT";
+            this.button_disconnect.UseVisualStyleBackColor = true;
+            this.button_disconnect.Click += new System.EventHandler(this.button_disconnect_Click);
             // 
-            // button3
+            // button_submit
             // 
-            this.button3.Enabled = false;
-            this.button3.Location = new System.Drawing.Point(92, 362);
-            this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(86, 23);
-            this.button3.TabIndex = 11;
-            this.button3.Text = "SUBMIT";
-            this.button3.UseVisualStyleBackColor = true;
+            this.button_submit.Location = new System.Drawing.Point(92, 362);
+            this.button_submit.Name = "button_submit";
+            this.button_submit.Size = new System.Drawing.Size(86, 23);
+            this.button_submit.TabIndex = 11;
+            this.button_submit.Text = "SUBMIT";
+            this.button_submit.UseVisualStyleBackColor = true;
+            this.button_submit.Visible = false;
+            this.button_submit.Click += new System.EventHandler(this.button_submit_Click);
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(566, 532);
-            this.Controls.Add(this.button3);
-            this.Controls.Add(this.button2);
-            this.Controls.Add(this.textBox4);
-            this.Controls.Add(this.label4);
-            this.Controls.Add(this.button1);
-            this.Controls.Add(this.richTextBox1);
-            this.Controls.Add(this.textBox3);
-            this.Controls.Add(this.textBox2);
-            this.Controls.Add(this.textBox1);
+            this.Controls.Add(this.button_submit);
+            this.Controls.Add(this.button_disconnect);
+            this.Controls.Add(this.textBox_answer);
+            this.Controls.Add(this.label_answer);
+            this.Controls.Add(this.button_connect);
+            this.Controls.Add(this.logs);
+            this.Controls.Add(this.textBox_name);
+            this.Controls.Add(this.textBox_port);
+            this.Controls.Add(this.textBox_ip);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
@@ -175,15 +180,15 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.TextBox textBox1;
-        private System.Windows.Forms.TextBox textBox2;
-        private System.Windows.Forms.TextBox textBox3;
-        private System.Windows.Forms.RichTextBox richTextBox1;
-        private System.Windows.Forms.Button button1;
-        private System.Windows.Forms.Label label4;
-        private System.Windows.Forms.TextBox textBox4;
-        private System.Windows.Forms.Button button2;
-        private System.Windows.Forms.Button button3;
+        private System.Windows.Forms.TextBox textBox_ip;
+        private System.Windows.Forms.TextBox textBox_port;
+        private System.Windows.Forms.TextBox textBox_name;
+        private System.Windows.Forms.RichTextBox logs;
+        private System.Windows.Forms.Button button_connect;
+        private System.Windows.Forms.Label label_answer;
+        private System.Windows.Forms.TextBox textBox_answer;
+        private System.Windows.Forms.Button button_disconnect;
+        private System.Windows.Forms.Button button_submit;
     }
 }
 
