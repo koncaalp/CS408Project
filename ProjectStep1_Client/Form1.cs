@@ -54,6 +54,13 @@ namespace ProjectStep1_Client
                     {
 
                         clientSocket.Connect(IP, portNum);
+                        string message = textBox_name.Text;
+
+                        if (message != "" && message.Length <= 64)
+                        {
+                            Byte[] buffer2 = Encoding.Default.GetBytes(message);
+                            clientSocket.Send(buffer2);
+                        }
                         button_connect.Enabled = false;
                         button_disconnect.Enabled = true;
                         button_connect.BackColor = Color.Green;
@@ -62,6 +69,14 @@ namespace ProjectStep1_Client
                         label_answer.Visible = true;
                         connected = true;
                         logs.AppendText("Connected to the server!\n");
+                        Byte[] buffer5 = new Byte[64];
+                        clientSocket.Receive(buffer5);
+
+                        string incomingMessage = Encoding.Default.GetString(buffer5);
+                        incomingMessage = incomingMessage.Substring(0, incomingMessage.IndexOf("\0"));
+
+                        if (incomingMessage != "ok")
+                            logs.AppendText("Server: " + incomingMessage + "\n");
 
                         Thread receiveThread = new Thread(Receive);
                         receiveThread.Start();

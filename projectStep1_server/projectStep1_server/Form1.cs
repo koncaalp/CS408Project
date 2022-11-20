@@ -17,6 +17,7 @@ namespace projectStep1_server
     {
         Socket serverSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
         List<Socket> clientSockets = new List<Socket>();
+        List<String> names = new List<String>();
 
         bool terminating = false;
         bool listening = false;
@@ -62,7 +63,7 @@ namespace projectStep1_server
                 try
                 {
                     Socket newClient = serverSocket.Accept();
-                    clientSockets.Add(newClient);
+                    
                     Byte[] buffer = new Byte[64];
                     newClient.Receive(buffer);
 
@@ -71,9 +72,27 @@ namespace projectStep1_server
                     logs.AppendText("Client: " + incomingMessage + "\n");
 
                     logs.AppendText("A client is connected.\n");
+                    if(names.Count == 0 || !names.Contains(incomingMessage))
+                    {
+                        names.Add(incomingMessage);
+                        Byte[] buffer_unique = Encoding.Default.GetBytes("ok");
 
-                    Thread receiveThread = new Thread(() => Receive(newClient)); // updated
-                    receiveThread.Start();
+                        newClient.Send(buffer_unique);
+                        Thread receiveThread = new Thread(() => Receive(newClient)); // updated
+                        receiveThread.Start();
+                        clientSockets.Add(newClient);
+                    }
+                    else
+                    {
+
+                        Byte[] buffer_unique = Encoding.Default.GetBytes("The names should be unique");
+
+                        newClient.Send(buffer_unique);
+                        newClient.Close();
+
+                    }
+
+                    
                 }
                 catch
                 {
@@ -123,5 +142,6 @@ namespace projectStep1_server
             terminating = true;
             Environment.Exit(0);
         }
+
     }
 }
