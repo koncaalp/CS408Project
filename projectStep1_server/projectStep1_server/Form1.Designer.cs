@@ -32,6 +32,8 @@
             this.label1 = new System.Windows.Forms.Label();
             this.logs = new System.Windows.Forms.RichTextBox();
             this.button_start = new System.Windows.Forms.Button();
+            this.label2 = new System.Windows.Forms.Label();
+            this.textBox_qnum = new System.Windows.Forms.TextBox();
             this.SuspendLayout();
             // 
             // textBox_port
@@ -61,7 +63,7 @@
             // 
             // button_start
             // 
-            this.button_start.Location = new System.Drawing.Point(447, 53);
+            this.button_start.Location = new System.Drawing.Point(862, 57);
             this.button_start.Name = "button_start";
             this.button_start.Size = new System.Drawing.Size(95, 39);
             this.button_start.TabIndex = 3;
@@ -69,11 +71,31 @@
             this.button_start.UseVisualStyleBackColor = true;
             this.button_start.Click += new System.EventHandler(this.button1_Click);
             // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(402, 61);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(214, 25);
+            this.label2.TabIndex = 5;
+            this.label2.Text = "Number of Questions";
+            this.label2.Click += new System.EventHandler(this.label2_Click);
+            // 
+            // textBox_qnum
+            // 
+            this.textBox_qnum.Location = new System.Drawing.Point(631, 61);
+            this.textBox_qnum.Name = "textBox_qnum";
+            this.textBox_qnum.Size = new System.Drawing.Size(175, 31);
+            this.textBox_qnum.TabIndex = 4;
+            this.textBox_qnum.TextChanged += new System.EventHandler(this.textBox1_TextChanged);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(12F, 25F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1031, 752);
+            this.Controls.Add(this.label2);
+            this.Controls.Add(this.textBox_qnum);
             this.Controls.Add(this.button_start);
             this.Controls.Add(this.logs);
             this.Controls.Add(this.label1);
@@ -91,6 +113,8 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.RichTextBox logs;
         private System.Windows.Forms.Button button_start;
+        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.TextBox textBox_qnum;
     }
 }
 
