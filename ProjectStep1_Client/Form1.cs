@@ -56,11 +56,11 @@ namespace ProjectStep1_Client
                         clientSocket.Connect(IP, portNum);
                         string message = textBox_name.Text;
 
-                        if (message != "" && message.Length <= 64)
-                        {
-                            Byte[] buffer2 = Encoding.Default.GetBytes(message);
-                            clientSocket.Send(buffer2);
-                        }
+                        //if (message != "" && message.Length <= 64)
+                        //{
+                        //    Byte[] buffer2 = Encoding.Default.GetBytes(message);
+                        //    clientSocket.Send(buffer2);
+                        //}
                         button_connect.Enabled = false;
                         button_disconnect.Enabled = true;
                         button_connect.BackColor = Color.Green;
@@ -69,6 +69,8 @@ namespace ProjectStep1_Client
                         label_answer.Visible = true;
                         connected = true;
                         logs.AppendText("Connected to the server!\n");
+                        Byte[] buffer = Encoding.Default.GetBytes(name);
+                        clientSocket.Send(buffer);
                         Byte[] buffer5 = new Byte[64];
                         clientSocket.Receive(buffer5);
 
@@ -86,8 +88,7 @@ namespace ProjectStep1_Client
                     {
                         logs.AppendText("Could not connect to the server!\n");
                     }
-                    Byte[] buffer = Encoding.Default.GetBytes(name);
-                    clientSocket.Send(buffer);
+                    
                 }
                 else
                 {

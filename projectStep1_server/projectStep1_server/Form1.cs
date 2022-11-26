@@ -19,6 +19,8 @@ namespace projectStep1_server
         List<Socket> clientSockets = new List<Socket>();
         List<String> names = new List<String>();
         String[] questions;
+        List<String> realQuestions = new List<String>();
+        List<int> realAnswers = new List<int>();
         Dictionary<string, double> scores = new Dictionary<string, double>();
         Dictionary<string, double> answers = new Dictionary<string, double>();
         int playerCount = 0;
@@ -33,6 +35,8 @@ namespace projectStep1_server
             Control.CheckForIllegalCrossThreadCalls = false;
             this.FormClosing += new FormClosingEventHandler(Form1_FormClosing);
             InitializeComponent();
+            Thread gameThread = new Thread(playGame);
+            gameThread.Start();
         }
 
         private void label1_Click(object sender, EventArgs e)
@@ -50,38 +54,108 @@ namespace projectStep1_server
                 serverSocket.Bind(endPoint);
                 serverSocket.Listen(3);
 
+                int qnum;
+                Int32.TryParse(textBox_qnum.Text, out qnum);
+                getQuestions(qnum);
+
                 listening = true;
                 button_start.Enabled = false;
                 Thread acceptThread = new Thread(Accept);
                 acceptThread.Start();
 
                 logs.AppendText("Started listening on port: " + serverPort + "\n");
-                int qnum;
-                Int32.TryParse(textBox_qnum.Text, out qnum);
 
-                getQuestions();
-                //sendQuestion(0);
-                int i = 2;
-                //while (i <= qnum*2)
-                //{
-                //    if ( answersReceived == playerCount)
-                //    {
-                        
-                //    }
-                //}
+                
+                
+                
+                
+
+                
             }
             else
             {
                 logs.AppendText("Please check port number \n");
             }
         }
-        private void getQuestions()
+
+        private void playGame()
+        {
+            while (!terminating && listening)
+            {   
+                if (playerCount == 1)
+                {
+                    logs.AppendText("GAME STARTS....\n");
+                    for (int qno = 0; qno < realQuestions.Count; qno++)
+                    {
+                        int numOfAnswersRecieved = 0;
+                        sendQuestion(qno);
+                        //foreach (Socket client in clientSockets)
+                        //{
+
+                        //}
+
+
+                        
+
+
+                    }
+
+                }
+
+
+            }
+
+        }
+
+
+        private void getQuestions(int qnum)
+
         {
             questions = System.IO.File.ReadAllLines(@"questions.txt");
+
+            
+            int questionsAdded = 0;
+            for (int i = 0; i < questions.Length; i++)
+            {
+               if (questionsAdded < qnum)
+                {
+                    if (i == questions.Length-1)
+                    {
+                        int line3;
+                        Int32.TryParse(questions[i], out line3);
+                        realAnswers.Add(line3);
+                        logs.AppendText("Answer:" + questions[i] + "\n");
+                        questionsAdded++;
+                        i = 0;
+                        if (questionsAdded == qnum)
+                        {
+                            break;
+                        }
+                    }
+                    if (i % 2 == 0)
+                    {
+                        logs.AppendText("Question:" + questions[i] + "\n");
+                        realQuestions.Add(questions[i]);
+                        
+                    }
+                    else
+                    {
+                        int line2;
+                        Int32.TryParse(questions[i], out line2);
+                        realAnswers.Add(line2);
+                        logs.AppendText("Answer:" + questions[i] + "\n");
+                        questionsAdded++;
+                    }
+                }  
+            }
+            
+
+
+
         }
         private void sendQuestion(int qnum)
         {
-            Byte[] buffer_question = Encoding.Default.GetBytes(questions[qnum]);
+            Byte[] buffer_question = Encoding.Default.GetBytes(realQuestions[qnum]);
             foreach (Socket client in clientSockets)
             {
                 try
@@ -108,35 +182,6 @@ namespace projectStep1_server
                     Thread receiveThread = new Thread(() => Receive(newClient)); // updated
                     receiveThread.Start();
 
-                    //Byte[] buffer = new Byte[64];
-                    //newClient.Receive(buffer);
-
-                    //string incomingMessage = Encoding.Default.GetString(buffer);
-                    //incomingMessage = incomingMessage.Substring(0, incomingMessage.IndexOf("\0"));
-                    //logs.AppendText("Client: " + incomingMessage + "\n");
-
-                    //logs.AppendText("A client is connected.\n");
-                    //if(names.Count == 0 || !names.Contains(incomingMessage))
-                    //{
-                    //    names.Add(incomingMessage);
-                    //    Byte[] buffer_unique = Encoding.Default.GetBytes("ok");
-
-                    //    newClient.Send(buffer_unique);
-                    //    Thread receiveThread = new Thread(() => Receive(newClient)); // updated
-                    //    receiveThread.Start();
-                    //    clientSockets.Add(newClient);
-                    //}
-                    //else
-                    //{
-
-                    //    Byte[] buffer_unique = Encoding.Default.GetBytes("The names should be unique");
-
-                    //    newClient.Send(buffer_unique);
-                    //    newClient.Close();
-
-                    //}
-
-
                 }
                 catch
                 {
@@ -152,6 +197,7 @@ namespace projectStep1_server
                 }
             }
         }
+
         private void Receive(Socket thisClient) // updated
         {
             bool connected = true;
@@ -197,6 +243,9 @@ namespace projectStep1_server
                         Int32.TryParse(incomingMessage, out answer);
                         answers.Add(name, answer);
                         logs.AppendText(name + " gave " +incomingMessage + " as an answer" + "\n");
+
+
+
                     }
                 }
                 catch
@@ -225,6 +274,11 @@ namespace projectStep1_server
         }
 
         private void textBox1_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void textBox_port_TextChanged(object sender, EventArgs e)
         {
 
         }
