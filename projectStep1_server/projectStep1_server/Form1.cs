@@ -35,8 +35,7 @@ namespace projectStep1_server
             Control.CheckForIllegalCrossThreadCalls = false;
             this.FormClosing += new FormClosingEventHandler(Form1_FormClosing);
             InitializeComponent();
-            Thread gameThread = new Thread(playGame);
-            gameThread.Start();
+           
         }
 
         private void label1_Click(object sender, EventArgs e)
@@ -47,6 +46,7 @@ namespace projectStep1_server
         private void button1_Click(object sender, EventArgs e)
         {
             int serverPort;
+            
 
             if (Int32.TryParse(textBox_port.Text, out serverPort))
             {
@@ -59,6 +59,9 @@ namespace projectStep1_server
                 getQuestions(qnum);
 
                 listening = true;
+                Thread gameThread = new Thread(playGame);
+                gameThread.Start();
+
                 button_start.Enabled = false;
                 Thread acceptThread = new Thread(Accept);
                 acceptThread.Start();
@@ -82,23 +85,33 @@ namespace projectStep1_server
         {
             while (!terminating && listening)
             {   
-                if (playerCount == 1)
+                if (playerCount == 2)
                 {
                     logs.AppendText("GAME STARTS....\n");
-                    for (int qno = 0; qno < realQuestions.Count; qno++)
+                    sendQuestion(0);
+
+                    int qno = 1;
+
+                    while (qno < realQuestions.Count)
                     {
-                        int numOfAnswersRecieved = 0;
-                        sendQuestion(qno);
+                        if (answersReceived == 2)
+                        {
+                            //calculateScore
+                            answersReceived = 0;
+                            sendQuestion(qno);
+                            qno++;
+                        }
+
                         //foreach (Socket client in clientSockets)
                         //{
 
                         //}
 
 
-                        
 
 
                     }
+                    break;
 
                 }
 
@@ -106,6 +119,7 @@ namespace projectStep1_server
             }
 
         }
+       
 
 
         private void getQuestions(int qnum)
@@ -178,7 +192,7 @@ namespace projectStep1_server
                 try
                 {
                     Socket newClient = serverSocket.Accept();
-                    playerCount++;
+                    //clientSockets.Add(newClient);
                     Thread receiveThread = new Thread(() => Receive(newClient)); // updated
                     receiveThread.Start();
 
@@ -220,7 +234,9 @@ namespace projectStep1_server
                             Byte[] buffer_unique = Encoding.Default.GetBytes("ok");
                             thisClient.Send(buffer_unique);
                             clientSockets.Add(thisClient);
+                            playerCount++;
                             logs.AppendText(name +" has connected"+"\n");
+                            
                         }
                         else
                         {
@@ -241,9 +257,9 @@ namespace projectStep1_server
                         incomingMessage = incomingMessage.Substring(0, incomingMessage.IndexOf("\0"));
                         int answer;
                         Int32.TryParse(incomingMessage, out answer);
-                        answers.Add(name, answer);
+                        answers[name]= answer;
                         logs.AppendText(name + " gave " +incomingMessage + " as an answer" + "\n");
-
+                        answersReceived++;
 
 
                     }

@@ -12,9 +12,11 @@ C:\Users\Aydın Aydemir\Documents\GitRepos\CS408_Project\CS408Project\ProjectSte
 \\Mac\Home\Downloads\CS408\CS408Project\ProjectStep1_Client\bin\Debug\ProjectStep1_Client.exe.config
 \\Mac\Home\Downloads\CS408\CS408Project\ProjectStep1_Client\bin\Debug\ProjectStep1_Client.exe
 \\Mac\Home\Downloads\CS408\CS408Project\ProjectStep1_Client\bin\Debug\ProjectStep1_Client.pdb
-\\Mac\Home\Downloads\CS408\CS408Project\ProjectStep1_Client\obj\Debug\ProjectStep1_Client.csprojResolveAssemblyReference.cache
 \\Mac\Home\Downloads\CS408\CS408Project\ProjectStep1_Client\obj\Debug\ProjectStep1_Client.Form1.resources
 \\Mac\Home\Downloads\CS408\CS408Project\ProjectStep1_Client\obj\Debug\ProjectStep1_Client.Properties.Resources.resources
 \\Mac\Home\Downloads\CS408\CS408Project\ProjectStep1_Client\obj\Debug\ProjectStep1_Client.csproj.GenerateResource.Cache
 \\Mac\Home\Downloads\CS408\CS408Project\ProjectStep1_Client\obj\Debug\ProjectStep1_Client.exe
 \\Mac\Home\Downloads\CS408\CS408Project\ProjectStep1_Client\obj\Debug\ProjectStep1_Client.pdb
+\\Mac\Home\Downloads\CS408\CS408Project\ProjectStep1_Client\obj\Debug\ProjectStep1_Client.csproj.AssemblyReference.cache
+\\Mac\Home\Downloads\CS408\CS408Project\ProjectStep1_Client\obj\Debug\ProjectStep1_Client.csproj.SuggestedBindingRedirects.cache
+\\Mac\Home\Downloads\CS408\CS408Project\ProjectStep1_Client\obj\Debug\ProjectStep1_Client.csproj.CoreCompileInputs.cache

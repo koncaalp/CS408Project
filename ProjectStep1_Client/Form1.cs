@@ -78,7 +78,11 @@ namespace ProjectStep1_Client
                         incomingMessage = incomingMessage.Substring(0, incomingMessage.IndexOf("\0"));
 
                         if (incomingMessage != "ok")
+                        {
                             logs.AppendText("Server: " + incomingMessage + "\n");
+                            clientSocket.Close();
+                            connected = false;
+                        }
 
                         Thread receiveThread = new Thread(Receive);
                         receiveThread.Start();
@@ -107,7 +111,7 @@ namespace ProjectStep1_Client
             {
                 try
                 {
-                    Byte[] buffer = new Byte[64];
+                    Byte[] buffer = new Byte[1064];
                     clientSocket.Receive(buffer);
 
                     string incomingMessage = Encoding.Default.GetString(buffer);
