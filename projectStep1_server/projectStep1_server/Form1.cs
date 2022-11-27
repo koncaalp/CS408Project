@@ -20,7 +20,7 @@ namespace projectStep1_server
         List<String> names = new List<String>();
         String[] questions;
         List<String> realQuestions = new List<String>();
-        List<int> realAnswers = new List<int>();
+        List<double> realAnswers = new List<double>();
         Dictionary<string, double> scores = new Dictionary<string, double>();
         Dictionary<string, double> answers = new Dictionary<string, double>();
         int playerCount = 0;
@@ -89,17 +89,24 @@ namespace projectStep1_server
                 {
                     logs.AppendText("GAME STARTS....\n");
                     sendQuestion(0);
+                    
 
                     int qno = 1;
 
-                    while (qno < realQuestions.Count)
+                    while (qno <= realQuestions.Count)
                     {
                         if (answersReceived == 2)
                         {
-                            //calculateScore
-                            answersReceived = 0;
-                            sendQuestion(qno);
+                            calculateRoundScore(qno-1);
+                            
+
+                            if (qno != realQuestions.Count)
+                            {
+                                answersReceived = 0;
+                                sendQuestion(qno);
+                            }
                             qno++;
+
                         }
 
                         //foreach (Socket client in clientSockets)
@@ -111,6 +118,7 @@ namespace projectStep1_server
 
 
                     }
+
                     break;
 
                 }
@@ -119,7 +127,73 @@ namespace projectStep1_server
             }
 
         }
-       
+
+        private void calculateRoundScore(int anum)
+        {
+
+            double rightAns = realAnswers[anum];
+            
+            double mindiff = double.MaxValue;
+            List <string> minplayer = new List<string>();
+            foreach (string keys in answers.Keys)
+            {
+               
+                if (Math.Abs(answers[keys] - rightAns) ==  mindiff)
+                {
+                    
+                    minplayer.Add(keys);
+                }
+                else if (Math.Abs(answers[keys] - rightAns) < mindiff)
+                {
+                    minplayer = new List<string>();
+                    mindiff = Math.Abs(answers[keys] - rightAns);
+                    minplayer.Add(keys);
+                }
+            }
+            if (minplayer.Count == 2)
+            {
+                foreach (string name in minplayer)
+                {
+                    scores[name] += 0.5;
+                }
+                logs.AppendText("There is a tie. Players who got 0.5: \n ");
+                foreach (string name in minplayer)
+                {
+                    logs.AppendText(name + "\n");
+                }
+            }
+            else
+            {
+                scores[minplayer[0]] += 1.0;
+                logs.AppendText("There is a winner. " + minplayer[0] +  " got 1 points \n ");
+            }
+            logs.AppendText("cumulative scores \n");
+            foreach (string name in scores.Keys)
+            {
+                logs.AppendText( name + scores[name] + "\n");
+
+            }
+
+            //if (abs(rightAns - ans1) > abs(rightAns - ans2))
+            //{
+
+            //    gamer2 += 1;
+
+            //}
+            //else if (abs(rightAns - ans1) < abs(rightAns - ans2))
+            //{
+
+            //    gamer1 += 1;
+
+            //}
+
+            //else
+            //{
+            //    gamer1 += 0.5;
+            //    gamer2 += 0.5;
+            //}
+        }
+
 
 
         private void getQuestions(int qnum)
@@ -236,6 +310,7 @@ namespace projectStep1_server
                             clientSockets.Add(thisClient);
                             playerCount++;
                             logs.AppendText(name +" has connected"+"\n");
+                            scores[name] = 0;
                             
                         }
                         else
