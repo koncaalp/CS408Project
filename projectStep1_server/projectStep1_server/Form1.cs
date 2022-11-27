@@ -1,14 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace projectStep1_server
@@ -35,7 +30,7 @@ namespace projectStep1_server
             Control.CheckForIllegalCrossThreadCalls = false;
             this.FormClosing += new FormClosingEventHandler(Form1_FormClosing);
             InitializeComponent();
-           
+
         }
 
         private void label1_Click(object sender, EventArgs e)
@@ -46,7 +41,7 @@ namespace projectStep1_server
         private void button1_Click(object sender, EventArgs e)
         {
             int serverPort;
-            
+
 
             if (Int32.TryParse(textBox_port.Text, out serverPort))
             {
@@ -68,12 +63,12 @@ namespace projectStep1_server
 
                 logs.AppendText("Started listening on port: " + serverPort + "\n");
 
-                
-                
-                
-                
 
-                
+
+
+
+
+
             }
             else
             {
@@ -84,26 +79,27 @@ namespace projectStep1_server
         private void playGame()
         {
             while (!terminating && listening)
-            {   
+            {
                 if (playerCount == 2)
                 {
-                    logs.AppendText("GAME STARTS....\n");
-                    sendQuestion(0);
-                    
+                    sendQuestion(0, "\nGAME STARTS....\n");
+
 
                     int qno = 1;
+                    logs.AppendText("\nGAME STARTS....\n");
 
                     while (qno <= realQuestions.Count)
                     {
                         if (answersReceived == 2)
                         {
-                            calculateRoundScore(qno-1);
-                            
+                            string anc = "";
+                            calculateRoundScore(qno - 1, ref anc);
+
 
                             if (qno != realQuestions.Count)
                             {
                                 answersReceived = 0;
-                                sendQuestion(qno);
+                                sendQuestion(qno, anc);
                             }
                             qno++;
 
@@ -128,19 +124,19 @@ namespace projectStep1_server
 
         }
 
-        private void calculateRoundScore(int anum)
+        private void calculateRoundScore(int anum, ref string announcement)
         {
-
+            string sendMessage = "";
             double rightAns = realAnswers[anum];
-            
+
             double mindiff = double.MaxValue;
-            List <string> minplayer = new List<string>();
+            List<string> minplayer = new List<string>();
             foreach (string keys in answers.Keys)
             {
-               
-                if (Math.Abs(answers[keys] - rightAns) ==  mindiff)
+
+                if (Math.Abs(answers[keys] - rightAns) == mindiff)
                 {
-                    
+
                     minplayer.Add(keys);
                 }
                 else if (Math.Abs(answers[keys] - rightAns) < mindiff)
@@ -156,42 +152,37 @@ namespace projectStep1_server
                 {
                     scores[name] += 0.5;
                 }
-                logs.AppendText("There is a tie. Players who got 0.5: \n ");
+                logs.AppendText("\n\n---------- There is a tie! ----------\n\n");
+                sendMessage += "\n\n---------- There is a tie! ----------\n\n";
                 foreach (string name in minplayer)
                 {
-                    logs.AppendText(name + "\n");
+                    string message = "Username: " + name + " got +0.5 pts\n";
+                    sendMessage += message;
+                    logs.AppendText(message);
                 }
+                logs.AppendText("\n\n");
+                sendMessage += ("\n\n");
             }
             else
             {
                 scores[minplayer[0]] += 1.0;
-                logs.AppendText("There is a winner. " + minplayer[0] +  " got 1 points \n ");
+                string message = "\n\n" + minplayer[0] + " is the winner! He/she got +1 pts!\n\n";
+                sendMessage += message;
+                logs.AppendText(message);
             }
-            logs.AppendText("cumulative scores \n");
+
+            logs.AppendText("-*-*-*-*-*-*-*-*-*- | CUMULATIVE SCORES | -*-*-*-*-*-*-*-*-*-\n");
+            sendMessage += "-*-*-*-*-*-*-*-*-*- | CUMULATIVE SCORES | -*-*-*-*-*-*-*-*-*-\n";
+            logs.AppendText("_______________________________________________\n");
+            sendMessage += "_______________________________________________\n";
             foreach (string name in scores.Keys)
             {
-                logs.AppendText( name + scores[name] + "\n");
-
+                logs.AppendText("Username: " + name + "--> Score: " + scores[name] + "\n");
+                sendMessage += "Username: " + name + "--> Score: " + scores[name] + "\n";
             }
-
-            //if (abs(rightAns - ans1) > abs(rightAns - ans2))
-            //{
-
-            //    gamer2 += 1;
-
-            //}
-            //else if (abs(rightAns - ans1) < abs(rightAns - ans2))
-            //{
-
-            //    gamer1 += 1;
-
-            //}
-
-            //else
-            //{
-            //    gamer1 += 0.5;
-            //    gamer2 += 0.5;
-            //}
+            logs.AppendText("_______________________________________________\n");
+            sendMessage += "_______________________________________________\n";
+            announcement = sendMessage;
         }
 
 
@@ -201,13 +192,13 @@ namespace projectStep1_server
         {
             questions = System.IO.File.ReadAllLines(@"questions.txt");
 
-            
+
             int questionsAdded = 0;
             for (int i = 0; i < questions.Length; i++)
             {
-               if (questionsAdded < qnum)
+                if (questionsAdded < qnum)
                 {
-                    if (i == questions.Length-1)
+                    if (i == questions.Length - 1)
                     {
                         int line3;
                         Int32.TryParse(questions[i], out line3);
@@ -224,7 +215,7 @@ namespace projectStep1_server
                     {
                         logs.AppendText("Question:" + questions[i] + "\n");
                         realQuestions.Add(questions[i]);
-                        
+
                     }
                     else
                     {
@@ -234,20 +225,23 @@ namespace projectStep1_server
                         logs.AppendText("Answer:" + questions[i] + "\n");
                         questionsAdded++;
                     }
-                }  
+                }
             }
-            
+
 
 
 
         }
-        private void sendQuestion(int qnum)
+        private void sendQuestion(int qnum, string anc)
         {
             Byte[] buffer_question = Encoding.Default.GetBytes(realQuestions[qnum]);
+            Byte[] buffer_anc = Encoding.Default.GetBytes(anc);
             foreach (Socket client in clientSockets)
             {
                 try
                 {
+                    Thread.Sleep(50);
+                    client.Send(buffer_anc);
                     client.Send(buffer_question);
                 }
                 catch
@@ -309,9 +303,9 @@ namespace projectStep1_server
                             thisClient.Send(buffer_unique);
                             clientSockets.Add(thisClient);
                             playerCount++;
-                            logs.AppendText(name +" has connected"+"\n");
+                            logs.AppendText(name + " has connected" + "\n");
                             scores[name] = 0;
-                            
+
                         }
                         else
                         {
@@ -321,10 +315,10 @@ namespace projectStep1_server
                             logs.AppendText("Player is refused due to repeating name" + "\n");
                         }
 
-                        
+
                     }
                     else
-                    { 
+                    {
                         Byte[] buffer = new Byte[64];
                         thisClient.Receive(buffer);
 
@@ -332,8 +326,8 @@ namespace projectStep1_server
                         incomingMessage = incomingMessage.Substring(0, incomingMessage.IndexOf("\0"));
                         int answer;
                         Int32.TryParse(incomingMessage, out answer);
-                        answers[name]= answer;
-                        logs.AppendText(name + " gave " +incomingMessage + " as an answer" + "\n");
+                        answers[name] = answer;
+                        logs.AppendText(name + " gave " + incomingMessage + " as an answer" + "\n");
                         answersReceived++;
 
 
