@@ -1,13 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
-using System.Linq;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace ProjectStep1_Client
@@ -55,20 +50,6 @@ namespace ProjectStep1_Client
 
                         clientSocket.Connect(IP, portNum);
                         string message = textBox_name.Text;
-
-                        //if (message != "" && message.Length <= 64)
-                        //{
-                        //    Byte[] buffer2 = Encoding.Default.GetBytes(message);
-                        //    clientSocket.Send(buffer2);
-                        //}
-                        button_connect.Enabled = false;
-                        button_disconnect.Enabled = true;
-                        button_connect.BackColor = Color.Green;
-                        textBox_answer.Visible = true;
-                        button_submit.Visible = true;
-                        label_answer.Visible = true;
-                        connected = true;
-                        logs.AppendText("Connected to the server!\n");
                         Byte[] buffer = Encoding.Default.GetBytes(name);
                         clientSocket.Send(buffer);
                         Byte[] buffer5 = new Byte[64];
@@ -82,23 +63,38 @@ namespace ProjectStep1_Client
                             logs.AppendText("Server: " + incomingMessage + "\n");
                             clientSocket.Close();
                             connected = false;
+                            button_connect.Enabled = true;
+                            textBox_answer.Visible = false;
+                            button_submit.Visible = false;
+                            button_disconnect.Enabled = false;
+                            label_answer.Visible = false;
+                            button_connect.BackColor = Color.White;
                         }
-
-                        Thread receiveThread = new Thread(Receive);
-                        receiveThread.Start();
-
+                        else
+                        {
+                            button_connect.Enabled = false;
+                            button_disconnect.Enabled = true;
+                            button_connect.BackColor = Color.Green;
+                            textBox_answer.Visible = true;
+                            button_submit.Visible = true;
+                            label_answer.Visible = true;
+                            connected = true;
+                            logs.AppendText("Connected to the server!\n");
+                            Thread receiveThread = new Thread(Receive);
+                            receiveThread.Start();
+                        }
                     }
                     catch
                     {
                         logs.AppendText("Could not connect to the server!\n");
                     }
-                    
+
                 }
                 else
                 {
                     logs.AppendText("You can't leave the name box blank \n");
                 }
-                
+
             }
             else
             {
@@ -164,6 +160,16 @@ namespace ProjectStep1_Client
             button_disconnect.Enabled = false;
             label_answer.Visible = false;
             button_connect.BackColor = Color.White;
+        }
+
+        private void textBox_port_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void textBox_ip_TextChanged(object sender, EventArgs e)
+        {
+
         }
     }
 

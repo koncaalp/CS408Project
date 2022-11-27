@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
@@ -22,6 +23,7 @@ namespace projectStep1_server
         int namesReceived = 0;
         int answersReceived = 0;
         bool gameStarted = false;
+        bool acceptConnections = true;
 
         bool terminating = false;
         bool listening = false;
@@ -83,7 +85,7 @@ namespace projectStep1_server
                 if (playerCount == 2)
                 {
                     sendQuestion(0, "\nGAME STARTS....\n");
-
+                    acceptConnections = false;
 
                     int qno = 1;
                     logs.AppendText("\nGAME STARTS....\n");
@@ -175,10 +177,11 @@ namespace projectStep1_server
             sendMessage += "-*-*-*-*-*-*-*-*-*- | CUMULATIVE SCORES | -*-*-*-*-*-*-*-*-*-\n";
             logs.AppendText("_______________________________________________\n");
             sendMessage += "_______________________________________________\n";
-            foreach (string name in scores.Keys)
+            var a = scores.OrderByDescending(key => key.Value);
+            foreach (var item in a)
             {
-                logs.AppendText("Username: " + name + "--> Score: " + scores[name] + "\n");
-                sendMessage += "Username: " + name + "--> Score: " + scores[name] + "\n";
+                logs.AppendText("Username: " + item.Key + "--> Score: " + item.Value + "\n");
+                sendMessage += "Username: " + item.Key + "--> Score: " + item.Value + "\n";
             }
             logs.AppendText("_______________________________________________\n");
             sendMessage += "_______________________________________________\n";
@@ -278,6 +281,7 @@ namespace projectStep1_server
 
                 }
             }
+
         }
 
         private void Receive(Socket thisClient) // updated
@@ -291,29 +295,42 @@ namespace projectStep1_server
                 {
                     if (name == "")
                     {
-                        Byte[] buffer_name = new Byte[64];
-                        thisClient.Receive(buffer_name);
-
-                        name = Encoding.Default.GetString(buffer_name);
-                        name = name.Substring(0, name.IndexOf("\0"));
-                        if (names.Count == 0 || !names.Contains(name))
+                        if (!acceptConnections)
                         {
-                            names.Add(name);
-                            Byte[] buffer_unique = Encoding.Default.GetBytes("ok");
-                            thisClient.Send(buffer_unique);
-                            clientSockets.Add(thisClient);
-                            playerCount++;
-                            logs.AppendText(name + " has connected" + "\n");
-                            scores[name] = 0;
-
+                            Byte[] bufferDeny = Encoding.Default.GetBytes("Sorry, the game has already started.\n");
+                            thisClient.Send(bufferDeny);
+                            break;
+                            // thisClient.Close();
                         }
                         else
                         {
-                            Byte[] buffer_unique = Encoding.Default.GetBytes("The name should be unique");
-                            thisClient.Send(buffer_unique);
-                            thisClient.Close();
-                            logs.AppendText("Player is refused due to repeating name" + "\n");
+                            Byte[] buffer_name = new Byte[64];
+                            thisClient.Receive(buffer_name);
+
+                            name = Encoding.Default.GetString(buffer_name);
+                            name = name.Substring(0, name.IndexOf("\0"));
+                            if (names.Count == 0 || !names.Contains(name))
+                            {
+                                names.Add(name);
+                                Byte[] buffer_unique = Encoding.Default.GetBytes("ok");
+                                thisClient.Send(buffer_unique);
+                                clientSockets.Add(thisClient);
+                                playerCount++;
+                                logs.AppendText(name + " has connected" + "\n");
+                                scores[name] = 0;
+
+                            }
+                            else
+                            {
+                                Byte[] buffer_unique = Encoding.Default.GetBytes("The name should be unique");
+                                thisClient.Send(buffer_unique);
+                                //thisClient.Close();
+                                logs.AppendText("Player is refused due to repeating name" + "\n");
+                            }
+
                         }
+
+
 
 
                     }
