@@ -20,10 +20,9 @@ namespace projectStep1_server
         Dictionary<string, double> scores = new Dictionary<string, double>();
         Dictionary<string, double> answers = new Dictionary<string, double>();
         int playerCount = 0;
-        int namesReceived = 0;
         int answersReceived = 0;
-        bool gameStarted = false;
         bool acceptConnections = true;
+        List<string> winnerNames = new List<string>();
 
         bool terminating = false;
         bool listening = false;
@@ -89,12 +88,12 @@ namespace projectStep1_server
 
                     int qno = 1;
                     logs.AppendText("\nGAME STARTS....\n");
-
+                    string anc = "";
                     while (qno <= realQuestions.Count)
                     {
                         if (answersReceived == 2)
                         {
-                            string anc = "";
+
                             calculateRoundScore(qno - 1, ref anc);
 
 
@@ -107,14 +106,35 @@ namespace projectStep1_server
 
                         }
 
-                        //foreach (Socket client in clientSockets)
-                        //{
-
-                        //}
 
 
 
 
+                    }
+
+                    foreach (Socket client in clientSockets)
+                    {
+                        string endMsg = anc;
+                        endMsg += "The game is finished!\n";
+                        endMsg += "Here is the FINAL score table!\n\n";
+                        endMsg += "-------------------------\n";
+                        var a = scores.OrderByDescending(key => key.Value);
+                        foreach (var item in a)
+                        {
+                            //logs.AppendText("Username: " + item.Key + "--> Score: " + item.Value + "\n");
+                            endMsg += "Username: " + item.Key + "--> Score: " + item.Value + "\n";
+                            endMsg += "-------------------------\n";
+                        }
+                        endMsg += "\n\n";
+                        endMsg += "---------------- THE WINNER(s) ----------------\n";
+                        foreach (string name in winnerNames)
+                        {
+                            endMsg += name + "\n";
+                        }
+
+
+                        Byte[] bufferInformEnd = Encoding.Default.GetBytes(endMsg);
+                        client.Send(bufferInformEnd);
                     }
 
                     break;
@@ -173,18 +193,35 @@ namespace projectStep1_server
                 logs.AppendText(message);
             }
 
-            logs.AppendText("-*-*-*-*-*-*-*-*-*- | CUMULATIVE SCORES | -*-*-*-*-*-*-*-*-*-\n");
-            sendMessage += "-*-*-*-*-*-*-*-*-*- | CUMULATIVE SCORES | -*-*-*-*-*-*-*-*-*-\n";
-            logs.AppendText("_______________________________________________\n");
-            sendMessage += "_______________________________________________\n";
-            var a = scores.OrderByDescending(key => key.Value);
-            foreach (var item in a)
+
+            if (anum < realAnswers.Count - 1)
             {
-                logs.AppendText("Username: " + item.Key + "--> Score: " + item.Value + "\n");
-                sendMessage += "Username: " + item.Key + "--> Score: " + item.Value + "\n";
+                logs.AppendText("-*-*-*-*-*-*-*-*-*- | CUMULATIVE SCORES | -*-*-*-*-*-*-*-*-*-\n");
+                sendMessage += "-*-*-*-*-*-*-*-*-*- | CUMULATIVE SCORES | -*-*-*-*-*-*-*-*-*-\n";
+                logs.AppendText("_______________________________________________\n");
+                sendMessage += "_______________________________________________\n";
+                var a = scores.OrderByDescending(key => key.Value);
+                foreach (var item in a)
+                {
+                    logs.AppendText("Username: " + item.Key + "--> Score: " + item.Value + "\n");
+                    sendMessage += "Username: " + item.Key + "--> Score: " + item.Value + "\n";
+                }
+                logs.AppendText("_______________________________________________\n");
+                sendMessage += "_______________________________________________\n";
+
             }
-            logs.AppendText("_______________________________________________\n");
-            sendMessage += "_______________________________________________\n";
+            else  // if we are in the last question
+            {
+                var a = scores.OrderByDescending(key => key.Value);
+                double winnerScore = a.ElementAt(0).Value;
+                foreach (var item in a)
+                {
+                    if (item.Value == winnerScore)
+                    {
+                        winnerNames.Add(item.Key);
+                    }
+                }
+            }
             announcement = sendMessage;
         }
 
