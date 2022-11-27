@@ -120,10 +120,14 @@ namespace ProjectStep1_Client
                     if (!terminating)
                     {
                         logs.AppendText("The server has disconnected\n");
+                        logs.AppendText("You can try to re-connect later...\n");
                         button_connect.Enabled = true;
                         textBox_answer.Visible = false;
                         button_submit.Visible = false;
                         label_answer.Visible = false;
+                        connected = false;
+                        button_disconnect.Enabled = false;
+                        button_connect.BackColor = Color.White;
                     }
 
                     clientSocket.Close();
