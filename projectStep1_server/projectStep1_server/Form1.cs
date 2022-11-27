@@ -24,7 +24,7 @@ namespace projectStep1_server
         bool acceptConnections = true;
         List<string> winnerNames = new List<string>();
         bool finishGame = false;
-
+        bool gameStarted = false;
         bool terminating = false;
         bool listening = false;
         public Form1()
@@ -86,7 +86,7 @@ namespace projectStep1_server
                 {
                     sendQuestion(0, "\nGAME STARTS....\n");
                     acceptConnections = false;
-
+                    gameStarted = true;
                     int qno = 1;
                     logs.AppendText("\nGAME STARTS....\n");
                     string anc = "";
@@ -140,9 +140,16 @@ namespace projectStep1_server
 
                         Byte[] bufferInformEnd = Encoding.Default.GetBytes(endMsg);
                         client.Send(bufferInformEnd);
+                        client.Close();
                     }
 
-                    break;
+                    finishGame = true;
+                    terminating = true;
+                    listening = false;
+
+                    serverSocket.Close();
+
+                    //break;
 
                 }
 
@@ -163,7 +170,6 @@ namespace projectStep1_server
 
                 if (Math.Abs(answers[keys] - rightAns) == mindiff)
                 {
-
                     minplayer.Add(keys);
                 }
                 else if (Math.Abs(answers[keys] - rightAns) < mindiff)
@@ -173,6 +179,21 @@ namespace projectStep1_server
                     minplayer.Add(keys);
                 }
             }
+            sendMessage += "\n------- Received all anwers -------\n";
+            sendMessage += "Correct answer of the question is -----> " + rightAns;
+            sendMessage += "\nGiven answers:\n";
+
+            foreach (var pair in answers)
+            {
+                sendMessage += "Username: " + pair.Key;
+                sendMessage += "    |    ";
+                sendMessage += "Answer: " + pair.Value;
+                sendMessage += " -------> Difference: " + Math.Abs(pair.Value - rightAns);
+                sendMessage += "\n";
+            }
+
+
+
             if (minplayer.Count == 2)
             {
                 foreach (string name in minplayer)
@@ -314,6 +335,7 @@ namespace projectStep1_server
                 {
                     if (terminating)
                     {
+
                         listening = false;
                     }
                     else
@@ -323,6 +345,7 @@ namespace projectStep1_server
 
                 }
             }
+
 
         }
 
@@ -337,6 +360,7 @@ namespace projectStep1_server
                 {
                     if (name == "")
                     {
+
                         if (!acceptConnections)
                         {
                             Byte[] bufferDeny = Encoding.Default.GetBytes("Sorry, the game has already started.\n");
@@ -366,7 +390,7 @@ namespace projectStep1_server
                             {
                                 Byte[] buffer_unique = Encoding.Default.GetBytes("The name should be unique");
                                 thisClient.Send(buffer_unique);
-                                //thisClient.Close();
+                                thisClient.Close();
                                 logs.AppendText("Player is refused due to repeating name" + "\n");
                             }
 
@@ -378,16 +402,20 @@ namespace projectStep1_server
                     }
                     else
                     {
-                        Byte[] buffer = new Byte[64];
-                        thisClient.Receive(buffer);
+                        if (!finishGame)
+                        {
+                            Byte[] buffer = new Byte[64];
+                            thisClient.Receive(buffer);
 
-                        string incomingMessage = Encoding.Default.GetString(buffer);
-                        incomingMessage = incomingMessage.Substring(0, incomingMessage.IndexOf("\0"));
-                        int answer;
-                        Int32.TryParse(incomingMessage, out answer);
-                        answers[name] = answer;
-                        logs.AppendText(name + " gave " + incomingMessage + " as an answer" + "\n");
-                        answersReceived++;
+                            string incomingMessage = Encoding.Default.GetString(buffer);
+                            incomingMessage = incomingMessage.Substring(0, incomingMessage.IndexOf("\0"));
+                            int answer;
+                            Int32.TryParse(incomingMessage, out answer);
+                            answers[name] = answer;
+                            logs.AppendText(name + " gave " + incomingMessage + " as an answer" + "\n");
+                            answersReceived++;
+                        }
+
 
 
                     }
@@ -396,17 +424,26 @@ namespace projectStep1_server
                 {
                     if (!terminating)
                     {
-                        logs.AppendText("A client has disconnected\n");
+                        logs.AppendText("Player with username: " + name + " has disconnected\n");
                     }
                     scores[name] = -1;
+                    names.Remove(name);
+                    playerCount--;
+
+
+
                     thisClient.Close();
                     clientSockets.Remove(thisClient);
 
 
                     foreach (Socket socket in clientSockets)
                     {
-                        Byte[] informAboutDisconnectionBuffer = Encoding.Default.GetBytes("Player with username: " + name + " disconnected! Game finishes!\n\n");
-                        socket.Send(informAboutDisconnectionBuffer);
+                        if (!finishGame)
+                        {
+                            Byte[] informAboutDisconnectionBuffer = Encoding.Default.GetBytes("Player with username: " + name + " disconnected! Game finishes!\n\n");
+                            socket.Send(informAboutDisconnectionBuffer);
+                        }
+
                     }
 
                     var a = scores.OrderByDescending(key => key.Value);
@@ -421,7 +458,11 @@ namespace projectStep1_server
 
                     scores[name] = 0;
                     connected = false;
-                    finishGame = true;
+                    if (gameStarted)
+                    {
+                        finishGame = true;
+                    }
+
                 }
             }
         }
