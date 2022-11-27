@@ -23,6 +23,7 @@ namespace projectStep1_server
         int answersReceived = 0;
         bool acceptConnections = true;
         List<string> winnerNames = new List<string>();
+        bool finishGame = false;
 
         bool terminating = false;
         bool listening = false;
@@ -89,15 +90,15 @@ namespace projectStep1_server
                     int qno = 1;
                     logs.AppendText("\nGAME STARTS....\n");
                     string anc = "";
-                    while (qno <= realQuestions.Count)
+                    while (qno <= realQuestions.Count && !finishGame)
                     {
-                        if (answersReceived == 2)
+                        if (answersReceived == 2 && !finishGame)
                         {
 
                             calculateRoundScore(qno - 1, ref anc);
 
 
-                            if (qno != realQuestions.Count)
+                            if (qno != realQuestions.Count && !finishGame)
                             {
                                 answersReceived = 0;
                                 sendQuestion(qno, anc);
@@ -114,7 +115,11 @@ namespace projectStep1_server
 
                     foreach (Socket client in clientSockets)
                     {
-                        string endMsg = anc;
+                        string endMsg = "";
+                        if (!finishGame)
+                        {
+                            endMsg = anc;
+                        }
                         endMsg += "The game is finished!\n";
                         endMsg += "Here is the FINAL score table!\n\n";
                         endMsg += "-------------------------\n";
@@ -393,9 +398,30 @@ namespace projectStep1_server
                     {
                         logs.AppendText("A client has disconnected\n");
                     }
+                    scores[name] = -1;
                     thisClient.Close();
                     clientSockets.Remove(thisClient);
+
+
+                    foreach (Socket socket in clientSockets)
+                    {
+                        Byte[] informAboutDisconnectionBuffer = Encoding.Default.GetBytes("Player with username: " + name + " disconnected! Game finishes!\n\n");
+                        socket.Send(informAboutDisconnectionBuffer);
+                    }
+
+                    var a = scores.OrderByDescending(key => key.Value);
+                    double winnerScore = a.ElementAt(0).Value;
+                    foreach (var item in a)
+                    {
+                        if (item.Value == winnerScore)
+                        {
+                            winnerNames.Add(item.Key);
+                        }
+                    }
+
+                    scores[name] = 0;
                     connected = false;
+                    finishGame = true;
                 }
             }
         }
