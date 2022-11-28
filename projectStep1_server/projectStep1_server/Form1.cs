@@ -42,19 +42,26 @@ namespace projectStep1_server
 
         private void button1_Click(object sender, EventArgs e)
         {
+            serverSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+            clientSockets = new List<Socket>();
+            names = new List<String>();
+            scores = new Dictionary<string, double>();
+            answers = new Dictionary<string, double>();
+            playerCount = 0;
+            answersReceived = 0;
+            acceptConnections = true;
+            winnerNames = new List<string>();
+            finishGame = true;
+            gameStarted = false;
+            terminating = false;
+            listening = false;
+
             int serverPort;
-
-
             if (Int32.TryParse(textBox_port.Text, out serverPort))
             {
                 IPEndPoint endPoint = new IPEndPoint(IPAddress.Any, serverPort);
                 serverSocket.Bind(endPoint);
                 serverSocket.Listen(3);
-
-                int qnum;
-                Int32.TryParse(textBox_qnum.Text, out qnum);
-                getQuestions(qnum);
-
                 listening = true;
                 Thread gameThread = new Thread(playGame);
                 gameThread.Start();
@@ -64,13 +71,6 @@ namespace projectStep1_server
                 acceptThread.Start();
 
                 logs.AppendText("Started listening on port: " + serverPort + "\n");
-
-
-
-
-
-
-
             }
             else
             {
@@ -82,8 +82,9 @@ namespace projectStep1_server
         {
             while (!terminating && listening)
             {
-                if (playerCount == 2)
+                if (playerCount == 2 && finishGame)
                 {
+                    finishGame = false;
                     sendQuestion(0, "\nGAME STARTS....\n");
                     acceptConnections = false;
                     gameStarted = true;
@@ -112,6 +113,7 @@ namespace projectStep1_server
 
 
                     }
+                    string za = "";
 
                     foreach (Socket client in clientSockets)
                     {
@@ -140,14 +142,22 @@ namespace projectStep1_server
 
                         Byte[] bufferInformEnd = Encoding.Default.GetBytes(endMsg);
                         client.Send(bufferInformEnd);
+                        Thread.Sleep(1000);
+
+                    }
+
+                    foreach (Socket client in clientSockets)
+                    {
                         client.Close();
                     }
 
                     finishGame = true;
                     terminating = true;
                     listening = false;
-
+                    button_start.Enabled = true;
                     serverSocket.Close();
+
+
 
                     //break;
 
@@ -325,10 +335,14 @@ namespace projectStep1_server
             {
                 try
                 {
-                    Socket newClient = serverSocket.Accept();
-                    //clientSockets.Add(newClient);
-                    Thread receiveThread = new Thread(() => Receive(newClient)); // updated
-                    receiveThread.Start();
+                    if (!gameStarted)
+                    {
+                        Socket newClient = serverSocket.Accept();
+                        //clientSockets.Add(newClient);
+                        Thread receiveThread = new Thread(() => Receive(newClient)); // updated
+                        receiveThread.Start();
+                    }
+
 
                 }
                 catch
@@ -351,6 +365,7 @@ namespace projectStep1_server
 
         private void Receive(Socket thisClient) // updated
         {
+            bool unique = true;
             bool connected = true;
             string name = "";
 
@@ -388,6 +403,7 @@ namespace projectStep1_server
                             }
                             else
                             {
+                                unique = false;
                                 Byte[] buffer_unique = Encoding.Default.GetBytes("The name should be unique");
                                 thisClient.Send(buffer_unique);
                                 thisClient.Close();
@@ -422,45 +438,45 @@ namespace projectStep1_server
                 }
                 catch
                 {
-                    if (!terminating)
+                    if (!terminating && unique)
                     {
                         logs.AppendText("Player with username: " + name + " has disconnected\n");
-                    }
-                    scores[name] = -1;
-                    names.Remove(name);
-                    playerCount--;
+                        scores[name] = -1;
+                        names.Remove(name);
+                        playerCount--;
 
 
 
-                    thisClient.Close();
-                    clientSockets.Remove(thisClient);
+                        thisClient.Close();
+                        clientSockets.Remove(thisClient);
 
 
-                    foreach (Socket socket in clientSockets)
-                    {
-                        if (!finishGame)
+                        foreach (Socket socket in clientSockets)
                         {
-                            Byte[] informAboutDisconnectionBuffer = Encoding.Default.GetBytes("Player with username: " + name + " disconnected! Game finishes!\n\n");
-                            socket.Send(informAboutDisconnectionBuffer);
+                            if (!finishGame)
+                            {
+                                Byte[] informAboutDisconnectionBuffer = Encoding.Default.GetBytes("Player with username: " + name + " disconnected! Game finishes!\n\n");
+                                socket.Send(informAboutDisconnectionBuffer);
+                            }
+
                         }
 
-                    }
-
-                    var a = scores.OrderByDescending(key => key.Value);
-                    double winnerScore = a.ElementAt(0).Value;
-                    foreach (var item in a)
-                    {
-                        if (item.Value == winnerScore)
+                        var a = scores.OrderByDescending(key => key.Value);
+                        double winnerScore = a.ElementAt(0).Value;
+                        foreach (var item in a)
                         {
-                            winnerNames.Add(item.Key);
+                            if (item.Value == winnerScore)
+                            {
+                                winnerNames.Add(item.Key);
+                            }
                         }
-                    }
 
-                    scores[name] = 0;
-                    connected = false;
-                    if (gameStarted)
-                    {
-                        finishGame = true;
+                        scores[name] = 0;
+                        connected = false;
+                        if (gameStarted)
+                        {
+                            finishGame = true;
+                        }
                     }
 
                 }
@@ -487,6 +503,16 @@ namespace projectStep1_server
         private void textBox_port_TextChanged(object sender, EventArgs e)
         {
 
+        }
+
+        private void button1_Click_1(object sender, EventArgs e)
+        {
+            int qnum;
+            Int32.TryParse(textBox_qnum.Text, out qnum);
+            getQuestions(qnum);
+            button_start.Visible = true;
+            textBox_port.Visible = true;
+            label1.Visible = true;
         }
     }
 }
