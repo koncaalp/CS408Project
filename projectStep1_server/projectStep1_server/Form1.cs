@@ -113,7 +113,7 @@ namespace projectStep1_server
 
 
                     }
-                    string za = "";
+
 
                     foreach (Socket client in clientSockets)
                     {
@@ -409,21 +409,19 @@ namespace projectStep1_server
                                 thisClient.Close();
                                 logs.AppendText("Player is refused due to repeating name" + "\n");
                             }
-
                         }
-
-
-
 
                     }
                     else
                     {
+                        Byte[] buffer = new Byte[64];
+                        thisClient.Receive(buffer);
                         if (!finishGame)
                         {
-                            Byte[] buffer = new Byte[64];
-                            thisClient.Receive(buffer);
+                            Byte[] buffer2 = new Byte[64];
+                            thisClient.Receive(buffer2);
 
-                            string incomingMessage = Encoding.Default.GetString(buffer);
+                            string incomingMessage = Encoding.Default.GetString(buffer2);
                             incomingMessage = incomingMessage.Substring(0, incomingMessage.IndexOf("\0"));
                             int answer;
                             Int32.TryParse(incomingMessage, out answer);
@@ -431,9 +429,6 @@ namespace projectStep1_server
                             logs.AppendText(name + " gave " + incomingMessage + " as an answer" + "\n");
                             answersReceived++;
                         }
-
-
-
                     }
                 }
                 catch
