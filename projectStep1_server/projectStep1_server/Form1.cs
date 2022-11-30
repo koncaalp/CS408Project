@@ -42,6 +42,7 @@ namespace projectStep1_server
 
         private void button1_Click(object sender, EventArgs e)
         {
+            button1.Enabled = false;
             serverSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
             clientSockets = new List<Socket>();
             names = new List<String>();
@@ -156,7 +157,7 @@ namespace projectStep1_server
                     listening = false;
                     button_start.Enabled = true;
                     serverSocket.Close();
-
+                    button1.Enabled = true;
 
 
                     //break;
@@ -266,6 +267,9 @@ namespace projectStep1_server
         private void getQuestions(int qnum)
 
         {
+
+            realAnswers = new List<double>();
+            realQuestions = new List<String>();
             questions = System.IO.File.ReadAllLines(@"questions.txt");
 
 
