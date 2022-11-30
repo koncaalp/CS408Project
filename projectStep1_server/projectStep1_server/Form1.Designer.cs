@@ -40,11 +40,10 @@
             // textBox_port
             // 
             this.textBox_port.Location = new System.Drawing.Point(142, 65);
-            this.textBox_port.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.textBox_port.Margin = new System.Windows.Forms.Padding(2);
             this.textBox_port.Name = "textBox_port";
             this.textBox_port.Size = new System.Drawing.Size(90, 20);
             this.textBox_port.TabIndex = 0;
-            this.textBox_port.Text = "8080";
             this.textBox_port.Visible = false;
             this.textBox_port.TextChanged += new System.EventHandler(this.textBox_port_TextChanged);
             // 
@@ -63,7 +62,7 @@
             // logs
             // 
             this.logs.Location = new System.Drawing.Point(38, 114);
-            this.logs.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.logs.Margin = new System.Windows.Forms.Padding(2);
             this.logs.Name = "logs";
             this.logs.Size = new System.Drawing.Size(442, 226);
             this.logs.TabIndex = 2;
@@ -72,7 +71,7 @@
             // button_start
             // 
             this.button_start.Location = new System.Drawing.Point(252, 65);
-            this.button_start.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.button_start.Margin = new System.Windows.Forms.Padding(2);
             this.button_start.Name = "button_start";
             this.button_start.Size = new System.Drawing.Size(228, 20);
             this.button_start.TabIndex = 3;
@@ -95,11 +94,10 @@
             // textBox_qnum
             // 
             this.textBox_qnum.Location = new System.Drawing.Point(142, 32);
-            this.textBox_qnum.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.textBox_qnum.Margin = new System.Windows.Forms.Padding(2);
             this.textBox_qnum.Name = "textBox_qnum";
             this.textBox_qnum.Size = new System.Drawing.Size(90, 20);
             this.textBox_qnum.TabIndex = 4;
-            this.textBox_qnum.Text = "5";
             this.textBox_qnum.TextChanged += new System.EventHandler(this.textBox1_TextChanged);
             // 
             // button1
@@ -125,7 +123,7 @@
             this.Controls.Add(this.logs);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.textBox_port);
-            this.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.Margin = new System.Windows.Forms.Padding(2);
             this.Name = "Form1";
             this.Text = "Form1";
             this.ResumeLayout(false);
