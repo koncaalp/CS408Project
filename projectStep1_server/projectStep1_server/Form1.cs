@@ -414,13 +414,10 @@ namespace projectStep1_server
                     }
                     else
                     {
-                        Byte[] buffer = new Byte[64];
-                        thisClient.Receive(buffer);
+                        Byte[] buffer2 = new Byte[64];
+                        thisClient.Receive(buffer2);
                         if (!finishGame)
                         {
-                            Byte[] buffer2 = new Byte[64];
-                            thisClient.Receive(buffer2);
-
                             string incomingMessage = Encoding.Default.GetString(buffer2);
                             incomingMessage = incomingMessage.Substring(0, incomingMessage.IndexOf("\0"));
                             int answer;
