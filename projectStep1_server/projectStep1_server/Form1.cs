@@ -270,7 +270,7 @@ namespace projectStep1_server
 
             realAnswers = new List<double>();
             realQuestions = new List<String>();
-            questions = System.IO.File.ReadAllLines(@"questions.txt");
+            questions = System.IO.File.ReadAllLines(@"../../questions.txt");
 
 
             int questionsAdded = 0;
