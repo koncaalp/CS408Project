@@ -114,6 +114,8 @@ namespace ProjectStep1_Client
                     incomingMessage = incomingMessage.Substring(0, incomingMessage.IndexOf("\0"));
 
                     logs.AppendText("Server: " + incomingMessage + "\n");
+                    button_submit.Enabled = true;
+
                 }
                 catch
                 {
@@ -145,6 +147,7 @@ namespace ProjectStep1_Client
 
         private void button_submit_Click(object sender, EventArgs e)
         {
+            button_submit.Enabled = false;
             string message = textBox_answer.Text;
 
             if (message != "" && message.Length <= 64)

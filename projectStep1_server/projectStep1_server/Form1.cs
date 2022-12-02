@@ -505,10 +505,18 @@ namespace projectStep1_server
         {
             int qnum;
             Int32.TryParse(textBox_qnum.Text, out qnum);
-            getQuestions(qnum);
-            button_start.Visible = true;
-            textBox_port.Visible = true;
-            label1.Visible = true;
+            if (qnum == 0)
+            {
+                logs.AppendText("You cannot set the number of questions to 0!\n");
+            }
+            else
+            {
+                getQuestions(qnum);
+                button_start.Visible = true;
+                textBox_port.Visible = true;
+                label1.Visible = true;
+            }
+
         }
     }
 }
