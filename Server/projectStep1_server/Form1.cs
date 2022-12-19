@@ -20,6 +20,7 @@ namespace projectStep1_server
         Dictionary<string, double> scores = new Dictionary<string, double>();
         Dictionary<string, double> answers = new Dictionary<string, double>();
         int playerCount = 0;
+        int playersInGame = 0;
         int answersReceived = 0;
         bool acceptConnections = true;
         List<string> winnerNames = new List<string>();
@@ -27,6 +28,7 @@ namespace projectStep1_server
         bool gameStarted = false;
         bool terminating = false;
         bool listening = false;
+        bool startGame = false;
         public Form1()
         {
             Control.CheckForIllegalCrossThreadCalls = false;
@@ -49,6 +51,7 @@ namespace projectStep1_server
             scores = new Dictionary<string, double>();
             answers = new Dictionary<string, double>();
             playerCount = 0;
+            playersInGame = 0;
             answersReceived = 0;
             acceptConnections = true;
             winnerNames = new List<string>();
@@ -83,7 +86,7 @@ namespace projectStep1_server
         {
             while (!terminating && listening)
             {
-                if (playerCount == 2 && finishGame)
+                if (playersInGame >= 2 && startGame && finishGame)
                 {
                     finishGame = false;
                     sendQuestion(0, "\nGAME STARTS....\n");
@@ -94,7 +97,7 @@ namespace projectStep1_server
                     string anc = "";
                     while (qno <= realQuestions.Count && !finishGame)
                     {
-                        if (answersReceived == 2 && !finishGame)
+                        if (answersReceived == playersInGame && !finishGame)
                         {
 
                             calculateRoundScore(qno - 1, ref anc);
@@ -151,7 +154,7 @@ namespace projectStep1_server
                     {
                         client.Close();
                     }
-
+                    startGame = false;
                     finishGame = true;
                     terminating = true;
                     listening = false;
@@ -169,7 +172,7 @@ namespace projectStep1_server
 
         }
 
-        private void calculateRoundScore(int anum, ref string announcement)
+        private void calculateRoundScore(int anum, ref string announcement) //TODO: multiplayer scoring
         {
             string sendMessage = "";
             double rightAns = realAnswers[anum];
@@ -380,7 +383,7 @@ namespace projectStep1_server
                     if (name == "")
                     {
 
-                        if (!acceptConnections)
+                        if (!acceptConnections) //TODO: Accept if the game is started
                         {
                             Byte[] bufferDeny = Encoding.Default.GetBytes("Sorry, the game has already started.\n");
                             thisClient.Send(bufferDeny);
@@ -401,6 +404,8 @@ namespace projectStep1_server
                                 thisClient.Send(buffer_unique);
                                 clientSockets.Add(thisClient);
                                 playerCount++;
+                                if (!startGame)
+                                    playersInGame++;
                                 logs.AppendText(name + " has connected" + "\n");
                                 scores[name] = 0;
 
@@ -517,6 +522,11 @@ namespace projectStep1_server
                 label1.Visible = true;
             }
 
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            startGame = true;
         }
     }
 }
