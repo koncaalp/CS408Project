@@ -56,7 +56,7 @@ namespace projectStep1_server
             playerCount = 0;
             playersInGame = 0;
             answersReceived = 0;
-            
+
             winnerNames = new List<string>();
             finishGame = true;
             gameStarted = false;
@@ -70,7 +70,7 @@ namespace projectStep1_server
                 serverSocket.Bind(endPoint);
                 serverSocket.Listen(3);
                 listening = true;
-                
+
 
                 button_start.Enabled = false;
                 Thread acceptThread = new Thread(Accept);
@@ -92,7 +92,7 @@ namespace projectStep1_server
                 {
                     finishGame = false;
                     sendQuestion(0, "\nGAME STARTS....\n");
-                    
+
                     gameStarted = true;
                     int qno = 1;
                     logs.AppendText("\nGAME STARTS....\n");
@@ -261,7 +261,7 @@ namespace projectStep1_server
             {
 
                 var a = scoresOfPlayers.OrderByDescending(key => key.Value);
-              
+
 
                 double winnerScore = a.ElementAt(0).Value;
                 foreach (var item in a)
@@ -393,11 +393,11 @@ namespace projectStep1_server
                     if (name == "")
                     {
 
-                        
+
                         //break;
                         // thisClient.Close();
-                        
-                        
+
+
                         Byte[] buffer_name = new Byte[64];
                         thisClient.Receive(buffer_name);
 
@@ -434,7 +434,7 @@ namespace projectStep1_server
                             thisClient.Close();
                             logs.AppendText("Player is refused due to repeating name" + "\n");
                         }
-                        
+
 
                     }
                     else
@@ -467,14 +467,19 @@ namespace projectStep1_server
                         thisClient.Close();
                         clientSockets.Remove(thisClient);
                         playerSockets.Remove(thisClient);
-                        playersInGame--;
+
+                        if (scoresOfPlayers.ContainsKey(name))
+                        {
+                            playersInGame--;
+                        }
+
 
 
                         foreach (Socket socket in clientSockets)
                         {
                             if (!finishGame)
                             {
-                                Byte[] informAboutDisconnectionBuffer = Encoding.Default.GetBytes("Player with username: " + name + " disconnected! Game finishes!\n\n");
+                                Byte[] informAboutDisconnectionBuffer = Encoding.Default.GetBytes("Player with username: " + name + " disconnected!\n\n");
                                 socket.Send(informAboutDisconnectionBuffer);
                             }
 
@@ -492,7 +497,7 @@ namespace projectStep1_server
 
                         scores[name] = 0;
                         connected = false;
-                        if (gameStarted)
+                        if (gameStarted && playersInGame == 1)
                         {
                             finishGame = true;
                         }
