@@ -76,6 +76,7 @@
             this.textBox_ip.Name = "textBox_ip";
             this.textBox_ip.Size = new System.Drawing.Size(153, 20);
             this.textBox_ip.TabIndex = 3;
+            this.textBox_ip.Text = "127.0.0.1";
             this.textBox_ip.TextChanged += new System.EventHandler(this.textBox_ip_TextChanged);
             // 
             // textBox_port
@@ -84,6 +85,7 @@
             this.textBox_port.Name = "textBox_port";
             this.textBox_port.Size = new System.Drawing.Size(153, 20);
             this.textBox_port.TabIndex = 4;
+            this.textBox_port.Text = "8080";
             this.textBox_port.TextChanged += new System.EventHandler(this.textBox_port_TextChanged);
             // 
             // textBox_name
@@ -92,6 +94,7 @@
             this.textBox_name.Name = "textBox_name";
             this.textBox_name.Size = new System.Drawing.Size(153, 20);
             this.textBox_name.TabIndex = 5;
+            this.textBox_name.Text = "aydin";
             // 
             // logs
             // 

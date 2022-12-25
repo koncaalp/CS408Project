@@ -50,13 +50,19 @@ namespace projectStep1_server
             serverSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
             clientSockets = new List<Socket>();
             names = new List<String>();
+
+
+
+
+
+
+
             scores = new Dictionary<string, double>();
             scoresOfPlayers = new Dictionary<string, double>();
             answers = new Dictionary<string, double>();
             playerCount = 0;
             playersInGame = 0;
             answersReceived = 0;
-
             winnerNames = new List<string>();
             finishGame = true;
             gameStarted = false;
@@ -88,6 +94,7 @@ namespace projectStep1_server
         {
             while (!terminating && listening)
             {
+
                 if (playersInGame >= 2 && startGame && finishGame)
                 {
                     finishGame = false;
@@ -157,18 +164,21 @@ namespace projectStep1_server
                     //{
                     //    client.Close();
                     //}
+                    Thread.Sleep(1000);
+                    button2.Enabled = true;
                     startGame = false;
                     finishGame = true;
                     playerSockets = clientSockets;
                     playersInGame = playerCount;
                     scoresOfPlayers = scores;
                     answersReceived = 0;
+                    winnerNames.Clear();
+                    answers.Clear();
                     //terminating = true;
                     //listening = false;
-                    //button_start.Enabled = true;
                     //serverSocket.Close();
                     //button1.Enabled = true;
-
+                    Thread.CurrentThread.Abort();
 
                     //break;
 
@@ -186,6 +196,9 @@ namespace projectStep1_server
 
             double mindiff = double.MaxValue;
             List<string> minplayer = new List<string>();
+            Thread.Sleep(1000);
+
+
             foreach (string keys in answers.Keys)
             {
 
@@ -206,26 +219,30 @@ namespace projectStep1_server
 
             foreach (var pair in answers)
             {
+
                 sendMessage += "Username: " + pair.Key;
                 sendMessage += "    |    ";
                 sendMessage += "Answer: " + pair.Value;
                 sendMessage += " -------> Difference: " + Math.Abs(pair.Value - rightAns);
                 sendMessage += "\n";
+
+
             }
 
 
 
             if (minplayer.Count >= 2)
             {
+                double pointsEach = Math.Round((double)1 / (double)minplayer.Count, 2);
                 foreach (string name in minplayer)
                 {
-                    scoresOfPlayers[name] += 0.5;
+                    scoresOfPlayers[name] += pointsEach;
                 }
                 logs.AppendText("\n\n---------- There is a tie! ----------\n\n");
                 sendMessage += "\n\n---------- There is a tie! ----------\n\n";
                 foreach (string name in minplayer)
                 {
-                    string message = "Username: " + name + " got +0.5 pts\n";
+                    string message = "Username: " + name + " got +" + pointsEach + " pts\n";
                     sendMessage += message;
                     logs.AppendText(message);
                 }
@@ -247,6 +264,8 @@ namespace projectStep1_server
                 sendMessage += "-*-*-*-*-*-*-*-*-*- | CUMULATIVE SCORES | -*-*-*-*-*-*-*-*-*-\n";
                 logs.AppendText("_______________________________________________\n");
                 sendMessage += "_______________________________________________\n";
+
+
                 var a = scoresOfPlayers.OrderByDescending(key => key.Value);
                 foreach (var item in a)
                 {
@@ -333,7 +352,7 @@ namespace projectStep1_server
             {
                 try
                 {
-                    Thread.Sleep(50);
+                    //Thread.Sleep(50);
                     client.Send(buffer_anc);
                     client.Send(buffer_question);
                 }
@@ -470,7 +489,14 @@ namespace projectStep1_server
 
                         if (scoresOfPlayers.ContainsKey(name))
                         {
+                            if (answers.ContainsKey(name))
+                            {
+                                answersReceived--;
+                            }
+                            scoresOfPlayers.Remove(name);
                             playersInGame--;
+                            scores.Remove(name);
+                            answers.Remove(name);
                         }
 
 
@@ -485,20 +511,18 @@ namespace projectStep1_server
 
                         }
 
-                        var a = scores.OrderByDescending(key => key.Value);
-                        double winnerScore = a.ElementAt(0).Value;
-                        foreach (var item in a)
-                        {
-                            if (item.Value == winnerScore)
-                            {
-                                winnerNames.Add(item.Key);
-                            }
-                        }
-
-                        scores[name] = 0;
                         connected = false;
                         if (gameStarted && playersInGame == 1)
                         {
+                            var a = scores.OrderByDescending(key => key.Value);
+                            double winnerScore = a.ElementAt(0).Value;
+                            foreach (var item in a)
+                            {
+                                if (item.Value == winnerScore)
+                                {
+                                    winnerNames.Add(item.Key);
+                                }
+                            }
                             finishGame = true;
                         }
                     }
@@ -549,9 +573,18 @@ namespace projectStep1_server
 
         private void button2_Click(object sender, EventArgs e)
         {
-            startGame = true;
-            Thread gameThread = new Thread(playGame);
-            gameThread.Start();
+            if (playerCount > 1)
+            {
+                startGame = true;
+                Thread gameThread = new Thread(playGame);
+                gameThread.Start();
+                button2.Enabled = false;
+            }
+            else
+            {
+                logs.AppendText("Cannot start the game with less than 2 players!\n");
+            }
+
         }
     }
 }
