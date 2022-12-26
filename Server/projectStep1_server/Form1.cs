@@ -170,7 +170,8 @@ namespace projectStep1_server
                     finishGame = true;
                     playerSockets = clientSockets;
                     playersInGame = playerCount;
-                    scoresOfPlayers = scores;
+
+                    scoresOfPlayers = new Dictionary<string, double>(scores);
                     answersReceived = 0;
                     winnerNames.Clear();
                     answers.Clear();
@@ -371,13 +372,10 @@ namespace projectStep1_server
             {
                 try
                 {
-                    if (!gameStarted)
-                    {
-                        Socket newClient = serverSocket.Accept();
-                        //clientSockets.Add(newClient);
-                        Thread receiveThread = new Thread(() => Receive(newClient)); // updated
-                        receiveThread.Start();
-                    }
+                    Socket newClient = serverSocket.Accept();
+                    //clientSockets.Add(newClient);
+                    Thread receiveThread = new Thread(() => Receive(newClient)); // updated
+                    receiveThread.Start();
 
 
                 }
@@ -428,7 +426,7 @@ namespace projectStep1_server
                             Byte[] buffer_unique = Encoding.Default.GetBytes("ok");
                             thisClient.Send(buffer_unique);
 
-                            if (gameStarted)
+                            if (startGame)
                             {
                                 Byte[] bufferDeny = Encoding.Default.GetBytes("Sorry, the game has already started. You will participate in the next game.\n");
                                 thisClient.Send(bufferDeny);
