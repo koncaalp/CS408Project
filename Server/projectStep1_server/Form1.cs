@@ -45,7 +45,6 @@ namespace projectStep1_server
 
         private void button1_Click(object sender, EventArgs e)
         {
-            button1.Enabled = false;
             button2.Visible = true;
             serverSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
             clientSockets = new List<Socket>();
@@ -78,7 +77,6 @@ namespace projectStep1_server
                 listening = true;
 
 
-                button_start.Enabled = false;
                 Thread acceptThread = new Thread(Accept);
                 acceptThread.Start();
 
@@ -168,7 +166,7 @@ namespace projectStep1_server
                     button2.Enabled = true;
                     startGame = false;
                     finishGame = true;
-                    playerSockets = clientSockets;
+                    playerSockets = new List<Socket>(clientSockets);
                     playersInGame = playerCount;
 
                     scoresOfPlayers = new Dictionary<string, double>(scores);
@@ -576,7 +574,6 @@ namespace projectStep1_server
                 startGame = true;
                 Thread gameThread = new Thread(playGame);
                 gameThread.Start();
-                button2.Enabled = false;
             }
             else
             {

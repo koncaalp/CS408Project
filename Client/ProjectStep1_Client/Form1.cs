@@ -114,7 +114,18 @@ namespace ProjectStep1_Client
                     incomingMessage = incomingMessage.Substring(0, incomingMessage.IndexOf("\0"));
 
                     logs.AppendText("Server: " + incomingMessage + "\n");
-                    button_submit.Enabled = true;
+
+
+                    if (incomingMessage != "Sorry, the game has already started. You will participate in the next game.\n")
+                    {
+                        button_submit.Enabled = true;
+                    }
+                    else
+                    {
+                        button_submit.Enabled = false;
+                    }
+
+
 
                 }
                 catch
