@@ -104,7 +104,7 @@ namespace projectStep1_server
                     string anc = "";
                     while (qno <= realQuestions.Count && !finishGame)
                     {
-                        if (answersReceived == -1)
+                        if (answersReceived < 0)
                         {
                             answersReceived = 0;
                         }
