@@ -104,6 +104,12 @@ namespace projectStep1_server
                     string anc = "";
                     while (qno <= realQuestions.Count && !finishGame)
                     {
+                        if (answersReceived == -1)
+                        {
+                            answersReceived = 0;
+                        }
+
+
                         //logs.AppendText(playersInGame + " " + answersReceived + " \n");
                         if (answersReceived == playersInGame && !finishGame)
                         {
