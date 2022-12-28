@@ -516,7 +516,7 @@ namespace projectStep1_server
                         connected = false;
                         if (startGame && playersInGame == 1)
                         {
-                            var a = scores.OrderByDescending(key => key.Value);
+                            var a = scoresOfPlayers.OrderByDescending(key => key.Value);
                             double winnerScore = a.ElementAt(0).Value;
                             foreach (var item in a)
                             {
