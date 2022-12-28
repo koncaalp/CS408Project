@@ -9,6 +9,7 @@ namespace ProjectStep1_Client
 {
     public partial class Form1 : Form
     {
+        //initialization
         bool terminating = false;
         bool connected = false;
         Socket clientSocket;
@@ -35,30 +36,34 @@ namespace ProjectStep1_Client
 
         }
 
+
+
+        // Connect button handler
+
         private void button1_Click(object sender, EventArgs e)
         {
             clientSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-            string IP = textBox_ip.Text;
-            string name = textBox_name.Text;
+            string IP = textBox_ip.Text;  // ip of the server field
+            string name = textBox_name.Text; // port
             int portNum;
             if (Int32.TryParse(textBox_port.Text, out portNum))
             {
-                if (name != "" && name.Length <= 64)
+                if (name != "" && name.Length <= 64)  // if name field is given.
                 {
                     try
                     {
 
-                        clientSocket.Connect(IP, portNum);
+                        clientSocket.Connect(IP, portNum);   // Connection
                         string message = textBox_name.Text;
                         Byte[] buffer = Encoding.Default.GetBytes(name);
-                        clientSocket.Send(buffer);
+                        clientSocket.Send(buffer);  // send the sign up request.
                         Byte[] buffer5 = new Byte[64];
-                        clientSocket.Receive(buffer5);
+                        clientSocket.Receive(buffer5);  // get the response message.
 
                         string incomingMessage = Encoding.Default.GetString(buffer5);
                         incomingMessage = incomingMessage.Substring(0, incomingMessage.IndexOf("\0"));
 
-                        if (incomingMessage != "ok")
+                        if (incomingMessage != "ok")   // if forr some reason user is not able to join the game.
                         {
                             logs.AppendText("Server: " + incomingMessage + "\n");
                             clientSocket.Close();
@@ -70,7 +75,7 @@ namespace ProjectStep1_Client
                             label_answer.Visible = false;
                             button_connect.BackColor = Color.White;
                         }
-                        else
+                        else // succeed.
                         {
                             button_connect.Enabled = false;
                             button_disconnect.Enabled = true;
@@ -101,6 +106,9 @@ namespace ProjectStep1_Client
                 logs.AppendText("Check the port\n");
             }
         }
+
+
+        // Receive thread.
         private void Receive()
         {
             while (connected)
@@ -108,7 +116,7 @@ namespace ProjectStep1_Client
                 try
                 {
                     Byte[] buffer = new Byte[1064];
-                    clientSocket.Receive(buffer);
+                    clientSocket.Receive(buffer);  // keep receiving.
 
                     string incomingMessage = Encoding.Default.GetString(buffer);
                     incomingMessage = incomingMessage.Substring(0, incomingMessage.IndexOf("\0"));
@@ -130,6 +138,7 @@ namespace ProjectStep1_Client
                 }
                 catch
                 {
+                    // if the connection is being closed.
                     if (!terminating)
                     {
                         logs.AppendText("The server has disconnected\n");
@@ -164,12 +173,15 @@ namespace ProjectStep1_Client
             if (message != "" && message.Length <= 64)
             {
                 Byte[] buffer = Encoding.Default.GetBytes(message);
-                clientSocket.Send(buffer);
+                clientSocket.Send(buffer);  // send the answer of the question.
             }
         }
 
         private void button_disconnect_Click(object sender, EventArgs e)
         {
+            // disconnecting from the server (game)
+            // close the socket
+
             clientSocket.Close();
             connected = false;
             button_connect.Enabled = true;
