@@ -46,7 +46,7 @@ namespace projectStep1_server
         private void button1_Click(object sender, EventArgs e)
         {
             button2.Visible = true;
-            serverSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+            serverSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp); //open the socket for server
             clientSockets = new List<Socket>();
             names = new List<String>();
 
@@ -56,9 +56,9 @@ namespace projectStep1_server
 
 
 
-            scores = new Dictionary<string, double>();
-            scoresOfPlayers = new Dictionary<string, double>();
-            answers = new Dictionary<string, double>();
+            scores = new Dictionary<string, double>(); //holds the scores of people connected
+            scoresOfPlayers = new Dictionary<string, double>(); //holds the scores of people currently playing
+            answers = new Dictionary<string, double>(); //current answers and the names of the player who gave that answer
             playerCount = 0;
             playersInGame = 0;
             answersReceived = 0;
@@ -69,7 +69,7 @@ namespace projectStep1_server
             listening = false;
 
             int serverPort;
-            if (Int32.TryParse(textBox_port.Text, out serverPort))
+            if (Int32.TryParse(textBox_port.Text, out serverPort)) //start listening
             {
                 IPEndPoint endPoint = new IPEndPoint(IPAddress.Any, serverPort);
                 serverSocket.Bind(endPoint);
@@ -77,7 +77,7 @@ namespace projectStep1_server
                 listening = true;
 
 
-                Thread acceptThread = new Thread(Accept);
+                Thread acceptThread = new Thread(Accept); //start accepting clients
                 acceptThread.Start();
 
                 logs.AppendText("Started listening on port: " + serverPort + "\n");
@@ -88,12 +88,12 @@ namespace projectStep1_server
             }
         }
 
-        private void playGame()
+        private void playGame() //main function 
         {
             while (!terminating && listening)
             {
 
-                if (playersInGame >= 2 && startGame && finishGame)
+                if (playersInGame >= 2 && startGame && finishGame) //if there are more than 1 players and start game button is clicked
                 {
                     finishGame = false;
                     sendQuestion(0, "\nGAME STARTS....\n");
@@ -102,7 +102,7 @@ namespace projectStep1_server
                     int qno = 1;
                     logs.AppendText("\nGAME STARTS....\n");
                     string anc = "";
-                    while (qno <= realQuestions.Count && !finishGame)
+                    while (qno <= realQuestions.Count && !finishGame) //loop until the questions run out or finish game turns to true
                     {
                         if (answersReceived < 0)
                         {
@@ -111,7 +111,7 @@ namespace projectStep1_server
 
 
                         //logs.AppendText(playersInGame + " " + answersReceived + " \n");
-                        if (answersReceived == playersInGame && !finishGame)
+                        if (answersReceived == playersInGame && !finishGame) //if everyone answered calculate the scores and pass to the next question
                         {
 
                             calculateRoundScore(qno - 1, ref anc);
@@ -133,7 +133,7 @@ namespace projectStep1_server
                     }
 
 
-                    foreach (Socket client in playerSockets)
+                    foreach (Socket client in playerSockets) //send the results of the game to all clients
                     {
                         string endMsg = "";
                         if (!finishGame)
@@ -152,7 +152,7 @@ namespace projectStep1_server
                         }
                         endMsg += "\n\n";
                         endMsg += "---------------- THE WINNER(s) ----------------\n";
-                        foreach (string name in winnerNames)
+                        foreach (string name in winnerNames) //send the winners
                         {
                             endMsg += name + "\n";
                         }
@@ -168,7 +168,7 @@ namespace projectStep1_server
                     //{
                     //    client.Close();
                     //}
-                    Thread.Sleep(1000);
+                    Thread.Sleep(1000); //bring the necessary variables to their initial state and include players joined in the middle of the previous game
                     button2.Enabled = true;
                     startGame = false;
                     finishGame = true;
@@ -194,7 +194,7 @@ namespace projectStep1_server
 
         }
 
-        private void calculateRoundScore(int anum, ref string announcement) //TODO: multiplayer scoring
+        private void calculateRoundScore(int anum, ref string announcement) //calculates the scores of the players after every round by finding the differences
         {
             string sendMessage = "";
             double rightAns = realAnswers[anum];
@@ -281,7 +281,7 @@ namespace projectStep1_server
                 sendMessage += "_______________________________________________\n";
 
             }
-            else  // if we are in the last question
+            else  // if we are in the last question find the winners
             {
 
                 var a = scoresOfPlayers.OrderByDescending(key => key.Value);
@@ -301,7 +301,7 @@ namespace projectStep1_server
 
 
 
-        private void getQuestions(int qnum)
+        private void getQuestions(int qnum) //fetch the questions from the txt file
 
         {
 
@@ -349,7 +349,7 @@ namespace projectStep1_server
 
 
         }
-        private void sendQuestion(int qnum, string anc)
+        private void sendQuestion(int qnum, string anc) //send the questions to the clients
         {
             Byte[] buffer_question = Encoding.Default.GetBytes(realQuestions[qnum]);
             Byte[] buffer_anc = Encoding.Default.GetBytes(anc);
@@ -370,7 +370,7 @@ namespace projectStep1_server
 
             }
         }
-        private void Accept()
+        private void Accept() //accept new connections from clients
         {
             while (listening)
             {
@@ -401,7 +401,7 @@ namespace projectStep1_server
 
         }
 
-        private void Receive(Socket thisClient) // updated
+        private void Receive(Socket thisClient) // receive answers and names from the clients, name uniquness is checked here and if not unique the client is disconnected. Also if the game has started when a new client connects this function handles it.
         {
             bool unique = true;
             bool connected = true;
@@ -503,7 +503,7 @@ namespace projectStep1_server
 
 
 
-                        foreach (Socket socket in clientSockets)
+                        foreach (Socket socket in clientSockets) //handles disconnections
                         {
                             if (!finishGame)
                             {
@@ -514,7 +514,7 @@ namespace projectStep1_server
                         }
 
                         connected = false;
-                        if (startGame && playersInGame == 1)
+                        if (startGame && playersInGame == 1) //if only one player is left, he/she is automatically the winner
                         {
                             var a = scoresOfPlayers.OrderByDescending(key => key.Value);
                             double winnerScore = a.ElementAt(0).Value;
@@ -578,7 +578,7 @@ namespace projectStep1_server
             if (playerCount > 1)
             {
                 startGame = true;
-                Thread gameThread = new Thread(playGame);
+                Thread gameThread = new Thread(playGame); //start the game thread
                 gameThread.Start();
             }
             else
